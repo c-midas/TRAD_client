@@ -272,27 +272,43 @@ const Dashboard = () => {
                       <div className="approved-application-sign fully-approved-sign">
                         <span className="material-icons-round">verified_user</span>
                       </div>
-                      <div className="mt-15 title">Fully Approved</div>
-                      <div className="mt-5 reading">{approvedApplication?.approved ?? 0}</div>
+                      <div className="mt-15 title">Agreed in full</div>
+                      <div className="mt-5 reading">{approvedApplication?.agreedInFull ?? 0}</div>
                       <div className="approved-application-stripe fully-approved-stripe" />
                     </div>
                     <div className="approved-application-block partially-approved-block">
                       <div className="approved-application-sign partially-approved-sign">
                         <span className="material-icons-round">watch_later</span>
                       </div>
-                      <div className="mt-15 title">Partially Approved</div>
-                      <div className="mt-5 reading">
-                        {approvedApplication?.partiallyApproved ?? 0}
-                      </div>
+                      <div className="mt-15 title">Maintained</div>
+                      <div className="mt-5 reading">{approvedApplication?.maintained ?? 0}</div>
                       <div className="approved-application-stripe partially-approved-stripe" />
                     </div>
                     <div className="approved-application-block rejected-block">
                       <div className="approved-application-sign rejected-sign">
                         <span className="material-icons-round">thumb_down</span>
                       </div>
-                      <div className="mt-15 title">Declined</div>
+                      <div className="mt-15 title">Refused</div>
                       <div className="mt-5 reading">{approvedApplication?.rejected ?? 0}</div>
                       <div className="approved-application-stripe rejected-stripe" />
+                    </div>
+                    <div className="approved-application-block partially-approved-block">
+                      <div className="approved-application-sign partially-approved-sign">
+                        <span className="material-icons-round">watch_later</span>
+                      </div>
+                      <div className="mt-15 title">Partically Agreed</div>
+                      <div className="mt-5 reading">
+                        {approvedApplication?.partiallyApproved ?? 0}
+                      </div>
+                      <div className="approved-application-stripe partially-approved-stripe" />
+                    </div>
+                    <div className="approved-application-block partially-approved-block">
+                      <div className="approved-application-sign partially-approved-sign">
+                        <span className="material-icons-round">watch_later</span>
+                      </div>
+                      <div className="mt-15 title">Temporary Limit</div>
+                      <div className="mt-5 reading">{approvedApplication?.temporaryLimit ?? 0}</div>
+                      <div className="approved-application-stripe partially-approved-stripe" />
                     </div>
                   </div>
                 </div>
