@@ -51,7 +51,6 @@ function applicationDocumentReducer(state, action) {
 const ApplicationDocumentsAccordion = props => {
   const dispatch = useDispatch();
   const { applicationId, index } = props;
-  const [fileData, setFileData] = useState('');
   const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
 
   const applicationDocsList = useSelector(
@@ -169,7 +168,6 @@ const ApplicationDocumentsAccordion = props => {
           setFileExtensionErrorMessage(false);
           errorNotification('File size should be less than 10MB.');
         } else {
-          setFileData(e.target.files[0]);
           setFileExtensionErrorMessage(false);
           dispatchSelectedApplicationDocuments({
             type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
@@ -179,7 +177,7 @@ const ApplicationDocumentsAccordion = props => {
         }
       }
     },
-    [setFileData, dispatchSelectedApplicationDocuments]
+    [dispatchSelectedApplicationDocuments]
   );
 
   const onCloseUploadDocumentButton = useCallback(() => {
@@ -187,9 +185,8 @@ const ApplicationDocumentsAccordion = props => {
     dispatchSelectedApplicationDocuments({
       type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
     });
-    setFileData('');
     toggleUploadModel();
-  }, [toggleUploadModel, dispatchSelectedApplicationDocuments, setFileData]);
+  }, [toggleUploadModel, dispatchSelectedApplicationDocuments]);
 
   const onClickUploadDocument = useCallback(async () => {
     setFileExtensionErrorMessage(false);
@@ -206,7 +203,7 @@ const ApplicationDocumentsAccordion = props => {
         },
       };
       
-      const formDataArr = selectedApplicationDocuments.fileData.map((data,index) => {
+      const formDataArr = selectedApplicationDocuments.fileData.map((data) => {
       let formData = new FormData();
       console.log(formData);
       formData.append('description', selectedApplicationDocuments.description);
@@ -214,14 +211,12 @@ const ApplicationDocumentsAccordion = props => {
       formData.append('document', data);
       formData.append('entityId', applicationId);
       formData.append('documentFor', 'application');
-      console.log(index,'okok');
       return formData;
     })
     dispatch(viewApplicationUploadDocuments(formDataArr, config, () => {
       dispatchSelectedApplicationDocuments({
         type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
       });
-      setFileData('');
       toggleUploadModel();
     }));      
   }
@@ -230,7 +225,6 @@ const ApplicationDocumentsAccordion = props => {
       dispatchSelectedApplicationDocuments,
       toggleUploadModel,
       applicationId,
-      setFileData,
     ]);
 
   const uploadDocumentButton = useMemo(
@@ -395,7 +389,6 @@ const ApplicationDocumentsAccordion = props => {
                 <FileUpload
                   isProfile={false}
                   fileName={data.name}
-                  // handleChange={onUploadClick}
                 />
                 {fileExtensionErrorMessage && (
                   <div className="ui-state-error">
