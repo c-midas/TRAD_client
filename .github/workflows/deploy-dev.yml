@@ -20,7 +20,7 @@ jobs:
         with:
           key: ${{ secrets.DEV_SSH_KEY }}
           name: id_rsa
-          known_hosts: ${{ secrets.DEV_KNOWN_HOSTS }}
+          known_hosts: ${{ secrets.TEST_KNOWN_HOSTS }}
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v2
