@@ -390,12 +390,6 @@ const ApplicationDocumentsAccordion = props => {
                   isProfile={false}
                   fileName={data.name}
                 />
-                {fileExtensionErrorMessage && (
-                  <div className="ui-state-error">
-                    Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf, png,
-                    pptx, ppt or rtf file types are accepted
-                  </div>
-                )}
               </div>
 
             ))}
