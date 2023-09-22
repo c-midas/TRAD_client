@@ -11,6 +11,7 @@ import Loader from '../../../common/Loader/Loader';
 import Pagination from '../../../common/Pagination/Pagination';
 import {
   applicationDownloadAction,
+  applicationFormDownloadAction,
   changeApplicationColumnNameList,
   getApplicationColumnNameList,
   getApplicationFilter,
@@ -63,6 +64,7 @@ const ApplicationList = () => {
     applicationListColumnResetButtonLoaderAction,
     applicationListPageLoader,
     applicationDownloadButtonLoaderAction,
+    applicationDownloadFormButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { applicationListFilters } = useSelector(
@@ -489,6 +491,14 @@ const ApplicationList = () => {
           <div className="page-header">
             <div className="page-header-name">Pending Application List</div>
             <div className="page-header-button-container">
+              <IconButton
+                buttonType="primary"
+                title="post_add"
+                className="mr-10"
+                buttonTitle="Click to download application form"
+                onClick={applicationFormDownloadAction}
+                isLoading={applicationDownloadFormButtonLoaderAction}
+              />
               <IconButton
                 buttonType="primary-1"
                 title="cloud_download"
