@@ -8,7 +8,7 @@ import {
   deleteViewApplicationDocumentAction,
   downloadDocuments,
   getApplicationModuleList,
-  viewApplicationUploadDocument,
+  viewApplicationUploadDocuments,
 } from '../../redux/ApplicationAction';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import IconButton from '../../../../common/IconButton/IconButton';
@@ -20,7 +20,7 @@ import { downloadAll } from '../../../../helpers/DownloadHelper';
 
 const initialApplicationDocumentState = {
   description: '',
-  fileData: '',
+  fileData: [],
   documentType: [],
 };
 const APPLICATION_DOCUMENT_REDUCER_ACTIONS = {
@@ -34,7 +34,8 @@ function applicationDocumentReducer(state, action) {
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA:
       return {
         ...state,
-        [`${action.name}`]: action.value,
+        [action.name]:
+          action.name === 'fileData' ? [...state[action.name], action.value] : action.value,
       };
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_DATA:
       return {
@@ -51,7 +52,6 @@ function applicationDocumentReducer(state, action) {
 const ApplicationDocumentsAccordion = props => {
   const dispatch = useDispatch();
   const { applicationId, index } = props;
-  const [fileData, setFileData] = useState('');
   const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
 
   const applicationDocsList = useSelector(
@@ -169,7 +169,6 @@ const ApplicationDocumentsAccordion = props => {
           setFileExtensionErrorMessage(false);
           errorNotification('File size should be less than 10MB.');
         } else {
-          setFileData(e.target.files[0]);
           setFileExtensionErrorMessage(false);
           dispatchSelectedApplicationDocuments({
             type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
@@ -179,7 +178,7 @@ const ApplicationDocumentsAccordion = props => {
         }
       }
     },
-    [setFileData, dispatchSelectedApplicationDocuments]
+    [dispatchSelectedApplicationDocuments]
   );
 
   const onCloseUploadDocumentButton = useCallback(() => {
@@ -187,9 +186,8 @@ const ApplicationDocumentsAccordion = props => {
     dispatchSelectedApplicationDocuments({
       type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
     });
-    setFileData('');
     toggleUploadModel();
-  }, [toggleUploadModel, dispatchSelectedApplicationDocuments, setFileData]);
+  }, [toggleUploadModel, dispatchSelectedApplicationDocuments]);
 
   const onClickUploadDocument = useCallback(async () => {
     setFileExtensionErrorMessage(false);
@@ -200,30 +198,34 @@ const ApplicationDocumentsAccordion = props => {
     } else if (!selectedApplicationDocuments.description) {
       errorNotification('Description is required');
     } else {
-      const formData = new FormData();
-      formData.append('description', selectedApplicationDocuments.description);
-      formData.append('documentType', selectedApplicationDocuments.documentType.value);
-      formData.append('document', selectedApplicationDocuments.fileData);
-      formData.append('entityId', applicationId);
-      formData.append('documentFor', 'application');
       const config = {
         headers: {
           'content-type': 'multipart/form-data',
         },
       };
-      await dispatch(viewApplicationUploadDocument(formData, config));
-      dispatchSelectedApplicationDocuments({
-        type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+      const formDataArr = selectedApplicationDocuments.fileData.map(data => {
+        const formData = new FormData();
+        formData.append('description', selectedApplicationDocuments.description);
+        formData.append('documentType', selectedApplicationDocuments.documentType.value);
+        formData.append('document', data);
+        formData.append('entityId', applicationId);
+        formData.append('documentFor', 'application');
+        return formData;
       });
-      setFileData('');
-      toggleUploadModel();
+      dispatch(
+        viewApplicationUploadDocuments(formDataArr, config, () => {
+          dispatchSelectedApplicationDocuments({
+            type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+          });
+          toggleUploadModel();
+        })
+      );
     }
   }, [
     selectedApplicationDocuments,
     dispatchSelectedApplicationDocuments,
     toggleUploadModel,
     applicationId,
-    setFileData,
   ]);
 
   const uploadDocumentButton = useMemo(
@@ -382,18 +384,21 @@ const ApplicationDocumentsAccordion = props => {
               isSearchable
             />
             <span>Please upload your documents here</span>
-            <div>
-              <FileUpload
-                isProfile={false}
-                fileName={fileData.name ?? 'Browse...'}
-                handleChange={onUploadClick}
-              />
-              {fileExtensionErrorMessage && (
-                <div className="ui-state-error">
-                  Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf, png,
-                  pptx, ppt or rtf file types are accepted
+            <div className="d-flex" style={{ flexDirection: 'column' }}>
+              {selectedApplicationDocuments.fileData?.map(data => (
+                <div>
+                  <FileUpload isProfile={false} fileName={data.name} />
                 </div>
-              )}
+              ))}
+              <div>
+                <FileUpload isProfile={false} fileName="Browse..." handleChange={onUploadClick} />
+                {fileExtensionErrorMessage && (
+                  <div className="ui-state-error">
+                    Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf,
+                    png, pptx, ppt or rtf file types are accepted
+                  </div>
+                )}
+              </div>
             </div>
             <span>Document Description:</span>
             <Input
