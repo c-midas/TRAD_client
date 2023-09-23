@@ -28,10 +28,10 @@ instance.interceptors.request.use(
     //   sourceRequest[request.url].cancel('Previous same call cancellation');
     // }
 
-    // // Store or update application token
-    // const axiosSource = axios.CancelToken.source();
-    // sourceRequest[request.url] = { cancel: axiosSource.cancel };
-    // request.cancelToken = axiosSource.token;
+    // Store or update application token
+    const axiosSource = axios.CancelToken.source();
+    sourceRequest[request.url] = { cancel: axiosSource.cancel };
+    request.cancelToken = axiosSource.token;
 
     return request;
   },
