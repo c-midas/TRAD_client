@@ -626,11 +626,11 @@ export const viewApplicationUploadDocuments = (dataArr, config, callBack) => {
         const promises = dataArr.map(data =>
           ApplicationViewApiServices.applicationModulesApiServices.uploadDocument(data, config)
         );
-        const resArr = await Promise.all(promises);        
+        const resArr = await Promise.all(promises);
 
         const len = dataArr.length;
 
-        for (let i = 0; i < len; i+=1) {
+        for (let i = 0; i < len; i += 1) {
           if (resArr[i]?.data?.status === 'SUCCESS') {
             dispatch({
               type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
@@ -642,7 +642,7 @@ export const viewApplicationUploadDocuments = (dataArr, config, callBack) => {
           }
         }
         callBack();
-      }
+      };
       seqPromises();
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('viewDocumentUploadDocumentButtonLoaderAction');
