@@ -30,29 +30,29 @@ const APPLICATION_DOCUMENT_REDUCER_ACTIONS = {
 };
 
 function applicationDocumentReducer(state, action) {
+  let stateUpdated;
   switch (action.type) {
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA:
-      let value;
       if (action.name === 'fileData') {
-        const arr = [ ...state[action.name] ];
+        const arr = [...state[action.name]];
 
-        if (action.id == undefined || action.id == null) {
+        if (action.id === undefined || action.id === null) {
           arr.push(action.value);
-        }
-        else {
+        } else {
           arr[action.id] = action.value;
         }
-        
-        value = arr;
-      }
-      else {
-        value = action.value;
-      }
 
-      return {
-        ...state,
-        [action.name]: value
-      };
+        stateUpdated = {
+          ...state,
+          [action.name]: arr,
+        };
+      } else {
+        stateUpdated = {
+          ...state,
+          [action.name]: action.value,
+        };
+      }
+      return stateUpdated;
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_DATA:
       return {
         ...state,
@@ -401,31 +401,26 @@ const ApplicationDocumentsAccordion = props => {
               isSearchable
             />
             <span>Please upload your documents here</span>
-            <div className='d-flex' style={{flexDirection:"column"}}>
-            { selectedApplicationDocuments.fileData?.map((data, ind) =>(
-              <div>
-                <FileUpload
-                  id={ind}
-                  handleChange={onUploadClick}
-                  isProfile={false}
-                  fileName={data.name}
-                />
-              </div>
-
-            ))}
-            <div>
-              <FileUpload
-                isProfile={false}
-                fileName='Browse...'
-                handleChange={onUploadClick}
-              />
-              {fileExtensionErrorMessage && (
-                <div className="ui-state-error">
-                  Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf, png,
-                  pptx, ppt or rtf file types are accepted
+            <div className="d-flex" style={{ flexDirection: 'column' }}>
+              {selectedApplicationDocuments.fileData?.map((data, ind) => (
+                <div>
+                  <FileUpload
+                    id={ind}
+                    handleChange={onUploadClick}
+                    isProfile={false}
+                    fileName={data.name}
+                  />
                 </div>
-              )}
-            </div>
+              ))}
+              <div>
+                <FileUpload isProfile={false} fileName="Browse..." handleChange={onUploadClick} />
+                {fileExtensionErrorMessage && (
+                  <div className="ui-state-error">
+                    Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf,
+                    png, pptx, ppt or rtf file types are accepted
+                  </div>
+                )}
+              </div>
             </div>
             <span>Document Description:</span>
             <Input
