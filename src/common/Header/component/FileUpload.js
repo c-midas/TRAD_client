@@ -46,13 +46,16 @@ const FileUpload = props => {
         type="file"
         style={{ display: 'none' }}
         ref={hiddenFileInput}
-        onChange={(e) => {handleChange(e, id)}}
+        onChange={e => {
+          handleChange(e, id);
+        }}
       />
       <p onClick={handleClick}>{fileName}</p>
     </div>
   );
 };
 FileUpload.propTypes = {
+  id: PropTypes.number.isRequired,
   fileName: PropTypes.string.isRequired,
   isProfile: PropTypes.bool,
   handleChange: PropTypes.func,
