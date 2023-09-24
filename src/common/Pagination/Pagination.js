@@ -13,7 +13,8 @@ const noPerPage = [
   { label: '100', value: 100 },
 ];
 const Pagination = props => {
-  const { total, limit, pages, page, sortOption, className, pageActionClick, onSelectLimit } = props;
+  const { total, limit, pages, page, sortOption, className, pageActionClick, onSelectLimit } =
+    props;
 
   const paginationClass = `pagination-container ${className}`;
 
@@ -36,15 +37,19 @@ const Pagination = props => {
     [setRecordLimit, onSelectLimit]
   );
 
-  useEffect(() => {
-    const found = noPerPage.find(e => e.value === limit);
-    let value = { label: '15', value: 15 };
+  useEffect(
+    () => {
+      const found = noPerPage.find(e => e.value === limit);
+      let value = { label: '15', value: 15 };
 
-    if (found) {
-      value = found;
-    }
-    setRecordLimit([value]);
-  }, [limit, setRecordLimit], [sortOption]);
+      if (found) {
+        value = found;
+      }
+      setRecordLimit([value]);
+    },
+    [limit, setRecordLimit],
+    [sortOption]
+  );
 
   if (total === 0) {
     return null;

@@ -29,11 +29,10 @@ const OverduesList = () => {
   const history = useHistory();
   const [newSubmissionDate, setNewSubmissionDate] = useState(null);
   const [newSubmissionModal, setNewSubmissionModal] = useState(false);
-      const [filter, dispatchFilter] = useReducer(filterReducer, {
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
     finalFilter: {},
   });
-  const [sortOpt, setsortOpt] = useState(2);
   const entityList = useSelector(({ overdue }) => overdue?.entityList ?? {});
 
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
@@ -46,7 +45,7 @@ const OverduesList = () => {
     page: paramPage,
     limit: paramLimit,
     sortOption: paramsortOption,
-        //  debtorId: paramDebtorId,
+    //  debtorId: paramDebtorId,
     minOutstandingAmount: paramMinOutstandingAmount,
     maxOutstandingAmount: paramMaxOutstandingAmount,
     startDate: paramStartDate,
@@ -119,10 +118,10 @@ const OverduesList = () => {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
-          const data = {
+        const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          sortOption: sortOption ?? sortOpt,
+          sortOption: sortOption ?? 2,
           debtorId:
             (tempFilter?.debtorId?.toString()?.trim()?.length ?? -1) > 0
               ? tempFilter?.debtorId
@@ -256,22 +255,19 @@ const OverduesList = () => {
   );
 
   const pageActionClick = useCallback(
-    
-    async ( newPage, sort ) => {
-      console.log('pageactoin:', sort);
+    async (newPage, sort) => {
       await getOverdueListByFilter({ page: newPage, limit, sortOption: sort });
     },
     [getOverdueListByFilter, limit, sortOption]
   );
-  
-  const sortActionClick = (sortvalue) =>{
-    setsortOpt(sortvalue);
+
+  const sortActionClick = sortvalue => {
     pageActionClick(page, sortvalue);
-  }
+  };
 
   const onSelectLimit = useCallback(
     async newLimit => {
-      await getOverdueListByFilter({ page: 1, limit: newLimit, sortOption:2 });
+      await getOverdueListByFilter({ page: 1, limit: newLimit, sortOption: 2 });
     },
     [getOverdueListByFilter]
   );
@@ -349,7 +345,7 @@ const OverduesList = () => {
                   headers={headers}
                   rowClass="cursor-pointer"
                   refreshData={getOverdueListByFilter}
-                  sortOption={sortOpt}
+                  sortOption={sortOption}
                   sortActionClick={sortActionClick}
                 />
               </div>

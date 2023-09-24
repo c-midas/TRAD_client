@@ -171,24 +171,16 @@ const Table = props => {
     [setSelectedRowData, selectedRowData]
   );
 
-  const onSortDataChange =(headlb) =>{
-    let sortopt = 0;
-    if(headlb === 'Client Name'){
-      if(sortOption === 0) sortopt = 1;
-      if(sortOption !== 0) sortopt = 0;
+  const onSortDataChange = headLabel => {
+    if (headLabel === 'Month') {
+      if (sortOption === 2) sortActionClick(3);
+      else if (sortOption !== 2) sortActionClick(2);
     }
-    if(headlb === 'Month'){
-      if(sortOption === 2) sortopt = 3;
-      if(sortOption !== 2) sortopt = 2;
-    }
-    console.log(sortopt);
-    sortActionClick(sortopt);
-  } 
+  };
 
-  const onSortflagUpdate = () => {
-    if(sortOption === 0 || sortOption === 2) {return true;}
-    return false;
-  }
+  const onSortFlagUpdate = () => {
+    return sortOption === 0 || sortOption === 2;
+  };
 
   const onSelectAllRow = useCallback(() => {
     if (tableData.length !== 0) {
@@ -244,10 +236,20 @@ const Table = props => {
                   className={`${headerClass} ${
                     heading.type === 'boolean' ? 'table-checkbox-header' : ''
                   }  `}
-                  onClick={heading.label === 'Client Name' || heading.label === 'Month' ? ()=>onSortDataChange(heading.label): null }
+                  onClick={
+                    heading.label === 'Client Name' || heading.label === 'Month'
+                      ? () => onSortDataChange(heading.label)
+                      : null
+                  }
                 >
                   {heading.label}
-                  { tableClassName === 'table-class main-list-table' && heading.label === 'Month' ?  <span className={`material-icons-round ${onSortflagUpdate() ? 'rotate-expandable-arrow-un' : 'rotate-expandable-arrow'}`}> keyboard_arrow_right </span> : ''}
+                  {tableClassName === 'table-class main-list-table' && heading.label === 'Month' ? (
+                    <span className="material-icons-round">
+                      {`${onSortFlagUpdate() ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}`}
+                    </span>
+                  ) : (
+                    ''
+                  )}
                 </th>
               ))}
             {(haveActions || extraColumns.length > 0) && (
@@ -325,7 +327,7 @@ Table.defaultProps = {
   onChangeRowSelection: () => {},
   sortOption: 2,
   sortActionClick: null,
-  };
+};
 
 export default Table;
 
