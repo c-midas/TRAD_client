@@ -52,7 +52,7 @@ function applicationDocumentReducer(state, action) {
       return {
         ...state,
         [action.name]: value
-      }
+      };
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_DATA:
       return {
         ...state,
@@ -220,28 +220,30 @@ const ApplicationDocumentsAccordion = props => {
           'content-type': 'multipart/form-data',
         },
       };
-      const formDataArr = selectedApplicationDocuments.fileData.map((data) => {
-      let formData = new FormData();
-      formData.append('description', selectedApplicationDocuments.description);
-      formData.append('documentType', selectedApplicationDocuments.documentType.value);
-      formData.append('document', data);
-      formData.append('entityId', applicationId);
-      formData.append('documentFor', 'application');
-      return formData;
-    })
-    dispatch(viewApplicationUploadDocuments(formDataArr, config, () => {
-      dispatchSelectedApplicationDocuments({
-        type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+      const formDataArr = selectedApplicationDocuments.fileData.map(data => {
+        const formData = new FormData();
+        formData.append('description', selectedApplicationDocuments.description);
+        formData.append('documentType', selectedApplicationDocuments.documentType.value);
+        formData.append('document', data);
+        formData.append('entityId', applicationId);
+        formData.append('documentFor', 'application');
+        return formData;
       });
-      toggleUploadModel();
-    }));      
-  }
+      dispatch(
+        viewApplicationUploadDocuments(formDataArr, config, () => {
+          dispatchSelectedApplicationDocuments({
+            type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+          });
+          toggleUploadModel();
+        })
+      );
+    }
   }, [
-      selectedApplicationDocuments,
-      dispatchSelectedApplicationDocuments,
-      toggleUploadModel,
-      applicationId,
-    ]);
+    selectedApplicationDocuments,
+    dispatchSelectedApplicationDocuments,
+    toggleUploadModel,
+    applicationId,
+  ]);
 
   const uploadDocumentButton = useMemo(
     () => [
