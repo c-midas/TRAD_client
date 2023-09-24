@@ -32,10 +32,26 @@ const APPLICATION_DOCUMENT_REDUCER_ACTIONS = {
 function applicationDocumentReducer(state, action) {
   switch (action.type) {
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA:
+      let value;
+      if (action.name === 'fileData') {
+        const arr = [ ...state[action.name] ];
+
+        if (action.id == undefined || action.id == null) {
+          arr.push(action.value);
+        }
+        else {
+          arr[action.id] = action.value;
+        }
+        
+        value = arr;
+      }
+      else {
+        value = action.value;
+      }
+
       return {
         ...state,
-        [action.name]:
-          action.name === 'fileData' ? [...state[action.name], action.value] : action.value,
+        [action.name]: value
       };
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_DATA:
       return {
@@ -117,7 +133,7 @@ const ApplicationDocumentsAccordion = props => {
   );
 
   const onUploadClick = useCallback(
-    e => {
+    (e, id) => {
       // e.persist();
       if (e.target.files && e.target.files.length > 0) {
         const fileExtension = [
@@ -174,6 +190,7 @@ const ApplicationDocumentsAccordion = props => {
             type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
             name: 'fileData',
             value: e.target.files[0],
+            id,
           });
         }
       }
@@ -384,21 +401,31 @@ const ApplicationDocumentsAccordion = props => {
               isSearchable
             />
             <span>Please upload your documents here</span>
-            <div className="d-flex" style={{ flexDirection: 'column' }}>
-              {selectedApplicationDocuments.fileData?.map(data => (
-                <div>
-                  <FileUpload isProfile={false} fileName={data.name} />
-                </div>
-              ))}
+            <div className='d-flex' style={{flexDirection:"column"}}>
+            { selectedApplicationDocuments.fileData?.map((data, ind) =>(
               <div>
-                <FileUpload isProfile={false} fileName="Browse..." handleChange={onUploadClick} />
-                {fileExtensionErrorMessage && (
-                  <div className="ui-state-error">
-                    Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf,
-                    png, pptx, ppt or rtf file types are accepted
-                  </div>
-                )}
+                <FileUpload
+                  id={ind}
+                  handleChange={onUploadClick}
+                  isProfile={false}
+                  fileName={data.name}
+                />
               </div>
+
+            ))}
+            <div>
+              <FileUpload
+                isProfile={false}
+                fileName='Browse...'
+                handleChange={onUploadClick}
+              />
+              {fileExtensionErrorMessage && (
+                <div className="ui-state-error">
+                  Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf, png,
+                  pptx, ppt or rtf file types are accepted
+                </div>
+              )}
+            </div>
             </div>
             <span>Document Description:</span>
             <Input
