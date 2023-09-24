@@ -33,7 +33,6 @@ const OverduesList = () => {
     tempFilter: {},
     finalFilter: {},
   });
-
   const entityList = useSelector(({ overdue }) => overdue?.entityList ?? {});
 
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
@@ -45,6 +44,7 @@ const OverduesList = () => {
   const {
     page: paramPage,
     limit: paramLimit,
+    sortOption: paramsortOption,
     //  debtorId: paramDebtorId,
     minOutstandingAmount: paramMinOutstandingAmount,
     maxOutstandingAmount: paramMaxOutstandingAmount,
@@ -103,7 +103,7 @@ const OverduesList = () => {
 
   const { overdueListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
 
-  const { total, pages, page, limit, docs, headers } = useMemo(
+  const { total, pages, page, limit, sortOption, docs, headers } = useMemo(
     () => overdueListWithPageData,
     [overdueListWithPageData]
   );
@@ -121,6 +121,7 @@ const OverduesList = () => {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
+          sortOption: sortOption ?? 2,
           debtorId:
             (tempFilter?.debtorId?.toString()?.trim()?.length ?? -1) > 0
               ? tempFilter?.debtorId
@@ -150,7 +151,7 @@ const OverduesList = () => {
         }
       }
     },
-    [page, limit, { ...tempFilter }]
+    [page, limit, sortOption, { ...tempFilter }]
   );
 
   const [filterModal, setFilterModal] = useState(false);
@@ -160,8 +161,8 @@ const OverduesList = () => {
   );
   const onClickApplyFilter = useCallback(async () => {
     toggleFilterModal();
-    await getOverdueListByFilter({ page: 1, limit: 15 });
-  }, [getOverdueListByFilter, toggleFilterModal, page, limit]);
+    await getOverdueListByFilter({ page: 1, limit: 15, sortOption: 2 });
+  }, [getOverdueListByFilter, toggleFilterModal, page, limit, sortOption]);
 
   const onClickResetFilter = useCallback(async () => {
     dispatchFilter({
@@ -200,6 +201,7 @@ const OverduesList = () => {
     const params = {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
+      sortOption: paramsortOption ?? sortOption ?? 2,
     };
     const filters = {
       debtorId: overdueListFilters?.debtorId,
@@ -236,6 +238,7 @@ const OverduesList = () => {
     {
       page: page ?? 1,
       limit: limit ?? 15,
+      sortOption: sortOption ?? 2,
       debtorId: finalFilter?.debtorId?.value ?? undefined,
       minOutstandingAmount:
         (finalFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
@@ -248,18 +251,23 @@ const OverduesList = () => {
       startDate: finalFilter?.startDate || undefined,
       endDate: finalFilter?.endDate || undefined,
     },
-    [page, limit, { ...finalFilter }]
+    [page, limit, sortOption, { ...finalFilter }]
   );
 
   const pageActionClick = useCallback(
-    async newPage => {
-      await getOverdueListByFilter({ page: newPage, limit });
+    async (newPage, sort) => {
+      await getOverdueListByFilter({ page: newPage, limit, sortOption: sort });
     },
-    [getOverdueListByFilter, limit]
+    [getOverdueListByFilter, limit, sortOption]
   );
+
+  const sortActionClick = sortvalue => {
+    pageActionClick(page, sortvalue);
+  };
+
   const onSelectLimit = useCallback(
     async newLimit => {
-      await getOverdueListByFilter({ page: 1, limit: newLimit });
+      await getOverdueListByFilter({ page: 1, limit: newLimit, sortOption: 2 });
     },
     [getOverdueListByFilter]
   );
@@ -337,6 +345,8 @@ const OverduesList = () => {
                   headers={headers}
                   rowClass="cursor-pointer"
                   refreshData={getOverdueListByFilter}
+                  sortOption={sortOption}
+                  sortActionClick={sortActionClick}
                 />
               </div>
               <Pagination
@@ -345,6 +355,7 @@ const OverduesList = () => {
                 pages={pages}
                 page={page}
                 limit={limit}
+                sortOption={sortOption}
                 pageActionClick={pageActionClick}
                 onSelectLimit={onSelectLimit}
               />

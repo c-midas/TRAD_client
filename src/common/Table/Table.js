@@ -62,6 +62,8 @@ const Table = props => {
     haveActions,
     showCheckbox,
     onChangeRowSelection,
+    sortOption,
+    sortActionClick,
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -169,6 +171,17 @@ const Table = props => {
     [setSelectedRowData, selectedRowData]
   );
 
+  const onSortDataChange = headLabel => {
+    if (headLabel === 'Month') {
+      if (sortOption === 2) sortActionClick(3);
+      else if (sortOption !== 2) sortActionClick(2);
+    }
+  };
+
+  const onSortFlagUpdate = () => {
+    return sortOption === 0 || sortOption === 2;
+  };
+
   const onSelectAllRow = useCallback(() => {
     if (tableData.length !== 0) {
       if (selectedRowData.length === tableData.length) {
@@ -223,8 +236,20 @@ const Table = props => {
                   className={`${headerClass} ${
                     heading.type === 'boolean' ? 'table-checkbox-header' : ''
                   }  `}
+                  onClick={
+                    heading.label === 'Client Name' || heading.label === 'Month'
+                      ? () => onSortDataChange(heading.label)
+                      : null
+                  }
                 >
                   {heading.label}
+                  {tableClassName === 'table-class main-list-table' && heading.label === 'Month' ? (
+                    <span className="material-icons-round">
+                      {`${onSortFlagUpdate() ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}`}
+                    </span>
+                  ) : (
+                    ''
+                  )}
                 </th>
               ))}
             {(haveActions || extraColumns.length > 0) && (
@@ -279,6 +304,8 @@ Table.propTypes = {
   haveActions: PropTypes.bool,
   showCheckbox: PropTypes.bool,
   onChangeRowSelection: PropTypes.func,
+  sortOption: PropTypes.number,
+  sortActionClick: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -298,6 +325,8 @@ Table.defaultProps = {
   recordActionClick: () => {},
   refreshData: () => {},
   onChangeRowSelection: () => {},
+  sortOption: 2,
+  sortActionClick: null,
 };
 
 export default Table;
