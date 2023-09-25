@@ -55,7 +55,7 @@ const FileUpload = props => {
   );
 };
 FileUpload.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
   fileName: PropTypes.string.isRequired,
   isProfile: PropTypes.bool,
   handleChange: PropTypes.func,
@@ -67,6 +67,7 @@ FileUpload.propTypes = {
 };
 
 FileUpload.defaultProps = {
+  id: null,
   isProfile: false,
   handleChange: () => {},
   isDeleteIcon: false,
