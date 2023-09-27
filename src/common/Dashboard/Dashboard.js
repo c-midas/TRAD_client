@@ -296,7 +296,7 @@ const Dashboard = () => {
                       <div className="approved-application-sign partially-approved-sign">
                         <span className="material-icons-round">watch_later</span>
                       </div>
-                      <div className="mt-15 title">Partically Agreed</div>
+                      <div className="mt-15 title">Partially Agreed</div>
                       <div className="mt-5 reading">
                         {approvedApplication?.partiallyApproved ?? 0}
                       </div>
