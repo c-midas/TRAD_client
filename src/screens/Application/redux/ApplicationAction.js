@@ -5,6 +5,7 @@ import {
   APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
   APPLICATION_REDUX_CONSTANTS,
 } from './ApplicationReduxConstants';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 import ApplicationCompanyStepApiServices from '../services/ApplicationCompanyStepApiServices';
 import ApplicationDocumentStepApiServices from '../services/ApplicationDocumentStepApiServices';
 import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
@@ -882,6 +883,21 @@ export const applicationDownloadAction = async filter => {
     }
   } catch (e) {
     stopGeneralLoaderOnSuccessOrFail(`applicationDownloadButtonLoaderAction`);
+    displayErrors(e);
+  }
+  return false;
+};
+
+export const applicationFormDownloadAction = async () => {
+  startGeneralLoaderOnRequest('applicationDownloadFormButtonLoaderAction');
+  try {
+    const response = await ApplicationApiServices.downloadApplicationForm();
+    if (response?.statusText === 'OK') {
+      stopGeneralLoaderOnSuccessOrFail(`applicationDownloadFormButtonLoaderAction`);
+    }
+    if (response) downloadAll(response);
+  } catch (e) {
+    stopGeneralLoaderOnSuccessOrFail(`applicationDownloadFormButtonLoaderAction`);
     displayErrors(e);
   }
   return false;
