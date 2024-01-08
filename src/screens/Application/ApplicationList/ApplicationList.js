@@ -100,7 +100,7 @@ const ApplicationList = () => {
   }, [{ ...tempFilter }]);
 
   const defaultApplicationStatus =
-    'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION';
+    'REVIEW_APPLICATION,AWAITING_INFORMATION,PENDING_WITH_INSURER,PENDING_DIRECT_APPROACH,DRAFT,REVIEW_SURRENDERED';
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
